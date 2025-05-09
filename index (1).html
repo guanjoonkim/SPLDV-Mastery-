@@ -1,0 +1,170 @@
+
+
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>SPLDV Otomatis</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e0f2ff;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      background: #f0f9ff;
+      margin: auto;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+      border: 2px solid #c7d2fe;
+    }
+
+    h1 {
+      text-align: center;
+      color: #4f46e5;
+    }
+
+    h2 {
+      color: #4f46e5;
+      margin-top: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 8px;
+      border: 1px solid #a5b4fc;
+      background-color: #e0e7ff;
+    }
+
+    button {
+      margin-top: 15px;
+      width: 100%;
+      padding: 10px;
+      background-color: #c7d2fe;
+      color: #1e3a8a;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #a5b4fc;
+    }
+
+    .result {
+      margin-top: 15px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 18px;
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .materi {
+      background-color: #d1d5db;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>SPLDV Otomatis</h1>
+
+    <div class="materi">
+      <h2>Pengenalan SPLDV</h2>
+      <p>Sistem Persamaan Linier Dua Variabel (SPLDV) adalah sistem persamaan yang terdiri dari dua persamaan linear dengan dua variabel (x dan y). SPLDV biasanya diselesaikan dengan dua metode: Substitusi dan Eliminasi.</p>
+      
+      <h3>Metode Substitusi:</h3>
+      <ul>
+        <li>Pilih salah satu persamaan dan isolasi salah satu variabel (misalnya, x atau y).</li>
+        <li>Substitusikan nilai variabel tersebut ke dalam persamaan kedua.</li>
+        <li>Selesaikan persamaan yang baru untuk menemukan nilai variabel lainnya.</li>
+        <li>Substitusikan kembali nilai variabel yang ditemukan ke dalam persamaan pertama untuk menemukan nilai variabel yang pertama.</li>
+      </ul>
+
+      <h3>Metode Eliminasi:</h3>
+      <ul>
+        <li>Kalikan atau bagi salah satu persamaan sehingga koefisien salah satu variabel menjadi sama.</li>
+        <li>Jumlahkan atau kurangkan kedua persamaan sehingga satu variabel akan hilang.</li>
+        <li>Selesaikan persamaan yang tersisa untuk menemukan nilai variabel.</li>
+        <li>Substitusikan nilai variabel ke dalam salah satu persamaan untuk menemukan nilai variabel lainnya.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <label>Masukkan Persamaan 1 (format ax + by = c):</label>
+      <input type="text" id="persamaan1" placeholder="Contoh: 2x + y = 7" />
+    </div>
+
+    <div class="section">
+      <label>Masukkan Persamaan 2 (format ax + by = c):</label>
+      <input type="text" id="persamaan2" placeholder="Contoh: x - y = 1" />
+    </div>
+
+    <button onclick="cariJawaban()">Cari Jawaban</button>
+
+    <div id="output" class="result"></div>
+  </div>
+
+  <script>
+    function parsePersamaan(str) {
+      str = str.replace(/\s+/g, ''); // Hapus spasi
+      const match = str.match(/^([+-]?\d*)x([+-]?\d*)y=([+-]?\d+)$/i);
+      if (!match) return null;
+
+      let a = match[1] === "" || match[1] === "+" ? 1 : (match[1] === "-" ? -1 : parseInt(match[1]));
+      let b = match[2] === "" || match[2] === "+" ? 1 : (match[2] === "-" ? -1 : parseInt(match[2]));
+      let c = parseInt(match[3]);
+
+      return { a, b, c };
+    }
+
+    function cariJawaban() {
+      const p1 = document.getElementById("persamaan1").value;
+      const p2 = document.getElementById("persamaan2").value;
+      const output = document.getElementById("output");
+
+      const eq1 = parsePersamaan(p1);
+      const eq2 = parsePersamaan(p2);
+
+      if (!eq1 || !eq2) {
+        output.innerHTML = "❗ Format salah. Gunakan format seperti: 2x + y = 7";
+        output.style.color = "orange";
+        return;
+      }
+
+      // Eliminasi (Cramer's Rule)
+      const { a: a1, b: b1, c: c1 } = eq1;
+      const { a: a2, b: b2, c: c2 } = eq2;
+
+      const D = a1 * b2 - a2 * b1;
+      const Dx = c1 * b2 - c2 * b1;
+      const Dy = a1 * c2 - a2 * c1;
+
+      if (D === 0) {
+        output.innerHTML = "⚠️ Sistem tidak memiliki solusi unik.";
+        output.style.color = "gray";
+        return;
+      }
+
+      const x = Dx / D;
+      const y = Dy / D;
+
+      output.innerHTML = `✅ Hasil: x = ${x}, y = ${y}`;
+      output.style.color = "green";
+    }
+  </script>
+</body>
+</html>
